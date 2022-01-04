@@ -11,8 +11,28 @@ def main():
     urls = soup.findAll('a', id = 'video-title')
     views = soup.findAll('span', class_ = 'style-scope ytd-video-meta-block')
     channels = soup.findAll('a', class_ = 'yt-simple-endpoint style-scope yt-formatted-string')
-    #for channel in channels:
-        #print(channel)
+    durations = soup.findAll('span', class_ = 'style-scope ytd-thumbnail-overlay-time-status-renderer')
+
+    arr = [[''] * 8 for i in range(len(titles))]
+    j = 0
+    k = 1
+    for i in range(len(titles)):
+        arr[i][0] = titles[i].text
+        arr[i][1] = channels[j].text
+        arr[i][2] = views[j].text
+        arr[i][3] = views[k].text
+        j += 2
+        k += 2
+    
+    for i in arr:
+        print(i)
+
+    print(len(titles))
+
+    #for i in durations:
+        #print(i.text)
+    #for i in views:
+        #print(i.text)
     #print(url.get('href'))
     
 
