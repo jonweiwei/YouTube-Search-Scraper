@@ -19,12 +19,34 @@ def sortByChannelAZReverse(arr) -> list:
     newArr = sorted(arr, key = lambda x: x[1], reverse = True)
     return newArr
 
+def getViews(views) -> int:
+    if(views == ''):
+        return 0
+    temp = views.split()
+    return int(temp[0].replace(',', ''))
+
 def sortByViews(arr) -> list:
-    newArr = sorted(arr, key = lambda x: x[2])
+    newArr = sorted(arr, key = lambda x: int(x[2].split()[0].replace(',', '')), reverse = True)
     return newArr
+    #newArr = arr
+    #for i in range(len(arr)):
+        #cur = newArr[i]
+        #index = i
+        #while index > 0 and getViews(newArr[index - 1][2]) < getViews(cur[2]):
+            #newArr[index] = newArr[index - 1]
+            #index -= 1
+        #newArr[index] = cur
+    #return newArr
 
 def sortByViewsReverse(arr) -> list:
-    newArr = sorted(arr, key = lambda x: x[2], reverse = True)
+    newArr = arr
+    for i in range(len(arr)):
+        cur = newArr[i]
+        index = i
+        while index > 0 and getViews(newArr[index - 1][2]) > getViews(cur[2]):
+            newArr[index] = newArr[index - 1]
+            index -= 1
+        newArr[index] = cur
     return newArr
 
 def sortByNewest(arr) -> list:
@@ -39,11 +61,33 @@ def sortByLongest(arr) -> list:
 def sortByShortest(arr) -> list:
     print('hi')
 
+def getComments(comments) -> int:
+    if(comments == ''):
+        return 0
+    temp = comments.split()
+    return int(temp[0])
+
 def sortByComments(arr) -> list:
-    print('hi')
+    newArr = arr
+    for i in range(len(arr)):
+        cur = newArr[i]
+        index = i
+        while index > 0 and getComments(newArr[index - 1][6]) < getComments(cur[6]):
+            newArr[index] = newArr[index - 1]
+            index -= 1
+        newArr[index] = cur
+    return newArr
 
 def sortByCommentsReverse(arr) -> list:
-    print('hi')
+    newArr = arr
+    for i in range(len(arr)):
+        cur = newArr[i]
+        index = i
+        while index > 0 and getComments(newArr[index - 1][6]) > getComments(cur[6]):
+            newArr[index] = newArr[index - 1]
+            index -= 1
+        newArr[index] = cur
+    return newArr
 
 def sortBySubs(arr) -> list:
     print('hi')
@@ -87,7 +131,7 @@ def getData() -> list:
         comments.append(soup.find('yt-formatted-string', class_ = 'count-text style-scope ytd-comments-header-renderer'))
         subs.append(soup.find('yt-formatted-string', id = 'owner-sub-count'))
 
-    arr = [[''] * 9 for i in range(len(titles))]
+    arr = [[''] * 9 for i in range(3)]
     j = 0
     for i in range(3):
         arr[i][0] = titles[i].text.replace('\n', '')
@@ -108,6 +152,6 @@ def getData() -> list:
     return arr
 
 array = getData()
-array = sortByViewsReverse(array)
-for i in array:
-    print(i)
+array = sortByViews(array)
+for i in range(3):
+    print(array[i])
