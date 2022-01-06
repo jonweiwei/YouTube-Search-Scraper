@@ -3,11 +3,55 @@ from bs4 import BeautifulSoup
 import requests
 import time
 
-def sortByViews(arr):
+def sortByAZ(arr) -> list:
+    newArr = sorted(arr, key = lambda x: x[0])
+    return newArr
+
+def sortByAZReverse(arr) -> list:
+    newArr = sorted(arr, key = lambda x: x[0], reverse = True)
+    return newArr
+
+def sortByChannelAZ(arr) -> list:
+    newArr = sorted(arr, key = lambda x: x[1])
+    return newArr
+
+def sortByChannelAZReverse(arr) -> list:
+    newArr = sorted(arr, key = lambda x: x[1], reverse = True)
+    return newArr
+
+def sortByViews(arr) -> list:
+    newArr = sorted(arr, key = lambda x: x[2])
+    return newArr
+
+def sortByViewsReverse(arr) -> list:
+    newArr = sorted(arr, key = lambda x: x[2], reverse = True)
+    return newArr
+
+def sortByNewest(arr) -> list:
     print('hi')
 
+def sortByOldest(arr) -> list:
+    print('hi')
 
-def getData():
+def sortByLongest(arr) -> list:
+    print('hi')
+
+def sortByShortest(arr) -> list:
+    print('hi')
+
+def sortByComments(arr) -> list:
+    print('hi')
+
+def sortByCommentsReverse(arr) -> list:
+    print('hi')
+
+def sortBySubs(arr) -> list:
+    print('hi')
+
+def sortBySubsReverse(arr) -> list:
+    print('hi')
+
+def getData() -> list:
     driver = webdriver.Chrome()
     driver.get('https://www.youtube.com/results?search_query=f1')
     time.sleep(2)
@@ -25,7 +69,7 @@ def getData():
     comments = []
     subs = []
 
-    for i in range(len(titles)):
+    for i in range(3):
         driver.get('https://www.youtube.com{}'.format(urls[i].get('href')))
         driver.maximize_window()
         # time.sleep is used here to ensure the scrolling is effective
@@ -45,7 +89,7 @@ def getData():
 
     arr = [[''] * 9 for i in range(len(titles))]
     j = 0
-    for i in range(len(titles)):
+    for i in range(3):
         arr[i][0] = titles[i].text.replace('\n', '')
         arr[i][1] = channels[j].text
         arr[i][2] = views[i].text
@@ -61,7 +105,9 @@ def getData():
         arr[i][8] = 'https://www.youtube.com{}'.format(urls[i].get('href'))
         j += 2
     
-    for i in arr:
-        print(i)
+    return arr
 
-getData()
+array = getData()
+array = sortByViewsReverse(array)
+for i in array:
+    print(i)
