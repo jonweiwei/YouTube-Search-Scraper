@@ -19,34 +19,12 @@ def sortByChannelAZReverse(arr) -> list:
     newArr = sorted(arr, key = lambda x: x[1], reverse = True)
     return newArr
 
-def getViews(views) -> int:
-    if(views == ''):
-        return 0
-    temp = views.split()
-    return int(temp[0].replace(',', ''))
-
 def sortByViews(arr) -> list:
     newArr = sorted(arr, key = lambda x: int(x[2].split()[0].replace(',', '')), reverse = True)
     return newArr
-    #newArr = arr
-    #for i in range(len(arr)):
-        #cur = newArr[i]
-        #index = i
-        #while index > 0 and getViews(newArr[index - 1][2]) < getViews(cur[2]):
-            #newArr[index] = newArr[index - 1]
-            #index -= 1
-        #newArr[index] = cur
-    #return newArr
 
 def sortByViewsReverse(arr) -> list:
-    newArr = arr
-    for i in range(len(arr)):
-        cur = newArr[i]
-        index = i
-        while index > 0 and getViews(newArr[index - 1][2]) > getViews(cur[2]):
-            newArr[index] = newArr[index - 1]
-            index -= 1
-        newArr[index] = cur
+    newArr = sorted(arr, key = lambda x: int(x[2].split()[0].replace(',', '')))
     return newArr
 
 def sortByNewest(arr) -> list:
@@ -56,37 +34,25 @@ def sortByOldest(arr) -> list:
     print('hi')
 
 def sortByLongest(arr) -> list:
-    print('hi')
+    newArr = sorted(arr, key = lambda x: int(x[4].replace(':', '')), reverse = True)
+    return newArr
 
 def sortByShortest(arr) -> list:
+    newArr = sorted(arr, key = lambda x: int(x[4].replace(':', '')))
+    return newArr
+
+def sortByLikes(arr) -> list:
     print('hi')
 
-def getComments(comments) -> int:
-    if(comments == ''):
-        return 0
-    temp = comments.split()
-    return int(temp[0])
+def sortByLikesReverse(arr) -> list:
+    print('hi')
 
 def sortByComments(arr) -> list:
-    newArr = arr
-    for i in range(len(arr)):
-        cur = newArr[i]
-        index = i
-        while index > 0 and getComments(newArr[index - 1][6]) < getComments(cur[6]):
-            newArr[index] = newArr[index - 1]
-            index -= 1
-        newArr[index] = cur
+    newArr = sorted(arr, key = lambda x: int(x[6].split()[0]), reverse = True)
     return newArr
 
 def sortByCommentsReverse(arr) -> list:
-    newArr = arr
-    for i in range(len(arr)):
-        cur = newArr[i]
-        index = i
-        while index > 0 and getComments(newArr[index - 1][6]) > getComments(cur[6]):
-            newArr[index] = newArr[index - 1]
-            index -= 1
-        newArr[index] = cur
+    newArr = sorted(arr, key = lambda x: int(x[6].split()[0]))
     return newArr
 
 def sortBySubs(arr) -> list:
@@ -141,17 +107,19 @@ def getData() -> list:
         temp = durations[i].text.replace('\n', '')
         arr[i][4] = temp.replace(' ', '')
         arr[i][5] = likes[i].text
+        # reminder to have a case for hidden likes
         if(isinstance(comments[i], type(None))):
-            arr[i][6] = ''
+            arr[i][6] = '0 Comments'
         else:
             arr[i][6] = comments[i].text
         arr[i][7] = subs[i].text
+        # reminder to have a case for hidden subs
         arr[i][8] = 'https://www.youtube.com{}'.format(urls[i].get('href'))
         j += 2
     
     return arr
 
 array = getData()
-array = sortByViews(array)
+array = sortByShortest(array)
 for i in range(3):
     print(array[i])
