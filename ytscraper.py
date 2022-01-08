@@ -62,14 +62,15 @@ def sortBySubsReverse(arr) -> list:
     print('hi')
 
 def getData() -> list:
-    driver = webdriver.Chrome()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--mute-audio")
+    driver = webdriver.Chrome(chrome_options=chrome_options)
     driver.get('https://www.youtube.com/results?search_query=f1')
     time.sleep(2)
     content = driver.page_source.encode('utf-8').strip()
     soup = BeautifulSoup(content, 'lxml')
     titles = soup.findAll('a', id = 'video-title')
     urls = soup.findAll('a', id = 'video-title')
-    #views = soup.findAll('span', class_ = 'style-scope ytd-video-meta-block')
     channels = soup.findAll('a', class_ = 'yt-simple-endpoint style-scope yt-formatted-string')
     durations = soup.findAll('span', id = 'text')
 
@@ -107,15 +108,18 @@ def getData() -> list:
         temp = durations[i].text.replace('\n', '')
         arr[i][4] = temp.replace(' ', '')
         arr[i][5] = likes[i].text
-        # reminder to have a case for hidden likes
         if(isinstance(comments[i], type(None))):
             arr[i][6] = '0 Comments'
         else:
             arr[i][6] = comments[i].text
-        arr[i][7] = subs[i].text
-        # reminder to have a case for hidden subs
+        if(isinstance(subs[i], type(None))):
+            arr[i][7] = '0 subscribers'
+        else:
+            arr[i][7] = subs[i].text
         arr[i][8] = 'https://www.youtube.com{}'.format(urls[i].get('href'))
         j += 2
+    
+    driver.quit()
     
     return arr
 
