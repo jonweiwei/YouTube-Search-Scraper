@@ -2,6 +2,7 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import requests
 import time
+from datetime import datetime
 
 def sortByAZ(arr) -> list:
     newArr = sorted(arr, key = lambda x: x[0])
@@ -28,10 +29,12 @@ def sortByViewsReverse(arr) -> list:
     return newArr
 
 def sortByNewest(arr) -> list:
-    print('hi')
+    newArr = sorted(arr, key = lambda date: datetime.strptime(date[3].replace(',', ''), '%b %d %Y'), reverse = True)
+    return newArr
 
 def sortByOldest(arr) -> list:
-    print('hi')
+    newArr = sorted(arr, key = lambda date: datetime.strptime(date[3].replace(',', ''), '%b %d %Y'))
+    return newArr
 
 def sortByLongest(arr) -> list:
     newArr = sorted(arr, key = lambda x: int(x[4].replace(':', '')), reverse = True)
@@ -41,11 +44,24 @@ def sortByShortest(arr) -> list:
     newArr = sorted(arr, key = lambda x: int(x[4].replace(':', '')))
     return newArr
 
+def getNum(num) -> int:
+    if 'K' in num:
+        newNum = int(float(num.replace('K', ''))*1000)
+    elif 'M' in num:
+        newNum = int(float(num.replace('M', ''))*1000000)
+    elif 'B' in num:
+        newNum = int(float(num.replace('B', ''))*1000000000)
+    else:
+        newNum = int(num)
+    return newNum
+
 def sortByLikes(arr) -> list:
-    print('hi')
+    newArr = sorted(arr, key = lambda x: getNum(x[5]), reverse = True)
+    return newArr
 
 def sortByLikesReverse(arr) -> list:
-    print('hi')
+    newArr = sorted(arr, key = lambda x: getNum(x[5]))
+    return newArr
 
 def sortByComments(arr) -> list:
     newArr = sorted(arr, key = lambda x: int(x[6].split()[0]), reverse = True)
@@ -56,10 +72,12 @@ def sortByCommentsReverse(arr) -> list:
     return newArr
 
 def sortBySubs(arr) -> list:
-    print('hi')
+    newArr = sorted(arr, key = lambda x: getNum(x[7].split()[0]), reverse = True)
+    return newArr
 
 def sortBySubsReverse(arr) -> list:
-    print('hi')
+    newArr = sorted(arr, key = lambda x: getNum(x[7].split()[0]))
+    return newArr
 
 def getData() -> list:
     chrome_options = webdriver.ChromeOptions()
@@ -112,7 +130,7 @@ def getData() -> list:
             arr[i][6] = '0 Comments'
         else:
             arr[i][6] = comments[i].text
-        if(isinstance(subs[i], type(None))):
+        if(subs[i].text == ''):
             arr[i][7] = '0 subscribers'
         else:
             arr[i][7] = subs[i].text
@@ -124,6 +142,6 @@ def getData() -> list:
     return arr
 
 array = getData()
-array = sortByShortest(array)
+array = sortBySubsReverse(array)
 for i in range(3):
     print(array[i])
