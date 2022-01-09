@@ -140,8 +140,3 @@ def getData() -> list:
     driver.quit()
     
     return arr
-
-array = getData()
-array = sortBySubsReverse(array)
-for i in range(3):
-    print(array[i])
