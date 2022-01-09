@@ -82,6 +82,7 @@ def sortBySubsReverse(arr) -> list:
 def getData() -> list:
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--mute-audio")
+    #chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(chrome_options=chrome_options)
     driver.get('https://www.youtube.com/results?search_query=f1')
     time.sleep(2)
