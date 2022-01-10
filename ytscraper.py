@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import requests
 import time
 from datetime import datetime
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 def sortByAZ(arr) -> list:
     newArr = sorted(arr, key = lambda x: x[0])
@@ -29,11 +32,11 @@ def sortByViewsReverse(arr) -> list:
     return newArr
 
 def sortByNewest(arr) -> list:
-    newArr = sorted(arr, key = lambda date: datetime.strptime(date[3].replace(',', ''), '%b %d %Y'), reverse = True)
+    newArr = sorted(arr, key = lambda date: datetime.strptime(date[3].replace(',', ''), '%d %b %Y'), reverse = True)
     return newArr
 
 def sortByOldest(arr) -> list:
-    newArr = sorted(arr, key = lambda date: datetime.strptime(date[3].replace(',', ''), '%b %d %Y'))
+    newArr = sorted(arr, key = lambda date: datetime.strptime(date[3].replace(',', ''), '%d %b %Y'))
     return newArr
 
 def sortByLongest(arr) -> list:
@@ -45,6 +48,8 @@ def sortByShortest(arr) -> list:
     return newArr
 
 def getNum(num) -> int:
+    if ',' in num:
+        num = num.replace(',' '')
     if 'K' in num:
         newNum = int(float(num.replace('K', ''))*1000)
     elif 'M' in num:
@@ -63,12 +68,15 @@ def sortByLikesReverse(arr) -> list:
     newArr = sorted(arr, key = lambda x: getNum(x[5]))
     return newArr
 
+def getComments(num) -> int:
+    return int(num.replace(',', ''))
+
 def sortByComments(arr) -> list:
-    newArr = sorted(arr, key = lambda x: int(x[6].split()[0]), reverse = True)
+    newArr = sorted(arr, key = lambda x: getComments(x[6].split()[0]), reverse = True)
     return newArr
 
 def sortByCommentsReverse(arr) -> list:
-    newArr = sorted(arr, key = lambda x: int(x[6].split()[0]))
+    newArr = sorted(arr, key = lambda x: getComments(x[6].split()[0]))
     return newArr
 
 def sortBySubs(arr) -> list:
@@ -79,12 +87,15 @@ def sortBySubsReverse(arr) -> list:
     newArr = sorted(arr, key = lambda x: getNum(x[7].split()[0]))
     return newArr
 
-def getData() -> list:
+def getData(search) -> list:
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--mute-audio")
-    #chrome_options.add_argument("--headless")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    chrome_options.add_argument('--window-size=1920,1080')
+    chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(chrome_options=chrome_options)
-    driver.get('https://www.youtube.com/results?search_query=f1')
+    driver.get('https://www.youtube.com/results?search_query={}'.format(search))
     time.sleep(2)
     content = driver.page_source.encode('utf-8').strip()
     soup = BeautifulSoup(content, 'lxml')
@@ -101,21 +112,17 @@ def getData() -> list:
 
     for i in range(3):
         driver.get('https://www.youtube.com{}'.format(urls[i].get('href')))
-        driver.maximize_window()
-        # time.sleep is used here to ensure the scrolling is effective
+        # time.sleep is used here to make sure the page loads the required data
         time.sleep(1)
-        # scroll down the page to load the comments
-        driver.execute_script("window.scrollTo(0,600)")
-        # time.sleep is used here to ensure that the page has loaded before the data is read
-        # the value should be changed depending on the speed of the computer and the network as well
-        time.sleep(2)
         content = driver.page_source.encode('utf-8').strip()
         soup = BeautifulSoup(content, 'lxml')
         views.append(soup.find('span', class_ = 'view-count style-scope ytd-video-view-count-renderer'))
         dates.append(soup.find('div', id = 'info-strings'))
         likes.append(soup.find('a', class_ = 'yt-simple-endpoint style-scope ytd-toggle-button-renderer'))
-        comments.append(soup.find('yt-formatted-string', class_ = 'count-text style-scope ytd-comments-header-renderer'))
+        #comments.append(soup.find('yt-formatted-string', class_ = 'count-text style-scope ytd-comments-header-renderer'))
         subs.append(soup.find('yt-formatted-string', id = 'owner-sub-count'))
+        driver.execute_script("return scrollBy(0, 1000);")
+        comments.append(WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.XPATH,"//h2[@id='count']/yt-formatted-string"))).text)
 
     arr = [[''] * 9 for i in range(3)]
     j = 0
@@ -130,7 +137,7 @@ def getData() -> list:
         if(isinstance(comments[i], type(None))):
             arr[i][6] = '0 Comments'
         else:
-            arr[i][6] = comments[i].text
+            arr[i][6] = comments[i]
         if(subs[i].text == ''):
             arr[i][7] = '0 subscribers'
         else:
