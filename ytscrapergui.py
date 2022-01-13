@@ -35,7 +35,6 @@ table.heading("URL", text = "URL", anchor = CENTER)
 table.pack(pady = 20)
 
 #array = getData('f1')
-#array = sortByViews(array)
 #for i in range(3):
 #    print(array[i])
 
