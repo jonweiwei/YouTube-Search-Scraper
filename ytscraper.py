@@ -110,7 +110,7 @@ def getData(search) -> list:
     comments = []
     subs = []
 
-    for i in range(3):
+    for i in range(len(titles)):
         driver.get('https://www.youtube.com{}'.format(urls[i].get('href')))
         # time.sleep is used here to make sure the page loads the required data
         time.sleep(1)
@@ -124,9 +124,9 @@ def getData(search) -> list:
         driver.execute_script("return scrollBy(0, 1000);")
         comments.append(WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.XPATH,"//h2[@id='count']/yt-formatted-string"))).text)
 
-    arr = [[''] * 9 for i in range(3)]
+    arr = [[''] * 9 for i in range(len(titles)]
     j = 0
-    for i in range(3):
+    for i in range(len(titles)):
         arr[i][0] = titles[i].text.replace('\n', '')
         arr[i][1] = channels[j].text
         arr[i][2] = views[i].text
