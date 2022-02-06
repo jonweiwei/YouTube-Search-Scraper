@@ -39,6 +39,7 @@ searchbox.place(x = 650, y = 50, width = 450, height = 30)
 def search():
     table.delete(*table.get_children())
     array = getData(searchbox.get())
+    # The following code allows for sorting by various categories
     #array = sortByViews(array)
     #array = sortByLikes(array)
     #array = sortByComments(array)
